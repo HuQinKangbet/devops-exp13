@@ -16,10 +16,12 @@ jobs:
       - name: 检出源码
         uses: actions/checkout@v4
 
-      - name: Python环境+单元测试
+      - name: Python环境安装
         uses: actions/setup-python@v5
         with:
           python-version: "3.9"
+
+      - name: 执行单元测试
         run: |
           pip install -r requirements.txt
           pytest test_app.py -v
