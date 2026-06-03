@@ -2,11 +2,9 @@ name: CI-GHCR自动打包推送
 on:
   push:
     branches: [ main ]
-# 关键权限：开启Packages写入权限（推送镜像必备）
 permissions:
   contents: read
   packages: write
-
 env:
   REG: ghcr.io
   IMAGE: ${{ github.repository }}
@@ -15,11 +13,9 @@ jobs:
   build-test-push:
     runs-on: ubuntu-latest
     steps:
-      # 1.拉取源码
       - name: 检出源码
         uses: actions/checkout@v4
 
-      # 2.单元测试CI
       - name: Python环境+单元测试
         uses: actions/setup-python@v5
         with:
@@ -28,7 +24,6 @@ jobs:
           pip install -r requirements.txt
           pytest test_app.py -v
 
-      # 3.GHCR自动登录（系统内置GITHUB_TOKEN，不用手动密钥）
       - name: 登录GHCR镜像仓库
         uses: docker/login-action@v3
         with:
@@ -36,7 +31,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 4.构建+推送镜像
       - name: 构建推送镜像
         run: |
           docker build -t ${{ env.REG }}/${{ env.IMAGE }}:latest .
